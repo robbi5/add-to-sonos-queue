@@ -5,7 +5,7 @@ Chrome Extension that adds the ability to add tracks from SoundCloud straight to
 
 [![Flattr this git repo](https://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=robbi5&url=https%3A%2F%2Fgithub.com%2Frobbi5%2Fadd-to-sonos-queue)
 
-![Screenshot](screenshots/happy.jpg)
+![Screenshot](https://raw.githubusercontent.com/robbi5/add-to-sonos-queue/master/screenshots/happy-0.1.0.jpg)
 
 Download
 --------
