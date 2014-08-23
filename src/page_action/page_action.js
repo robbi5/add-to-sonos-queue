@@ -24,6 +24,7 @@ var requireSetUp = function() {
 
 var gotSoundCloudUrl = function(url) {
   if (SONOS_DEVICE == null) return;
+  url = encodeURIComponent(url);
   request({
     uri: "https://api.soundcloud.com/resolve.json?url=" + url + "&client_id=" + SC_CLIENT_ID,
     json: true,
