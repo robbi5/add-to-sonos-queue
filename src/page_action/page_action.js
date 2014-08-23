@@ -83,7 +83,8 @@ document.getElementById('add_to_queue').addEventListener('click', function(ev) {
   if (CURRENT_TRACK == null) return;
   var self = this;
   self.classList.remove('success');
-  addSoundCloudTrackToQueue(CURRENT_TRACK,
+  addSoundCloudTrackToQueue(
+    CURRENT_TRACK,
     createErrorFn("add track to queue"),
     function(data) {
       self.classList.add('success');
@@ -97,6 +98,7 @@ document.getElementById('instaplay').addEventListener('click', function(ev) {
   var self = this;
   self.classList.remove('success');
   play(
+    CURRENT_TRACK,
     createErrorFn("play track"),
     function(data) {
       self.classList.add('success');
