@@ -124,11 +124,12 @@ document.getElementById('instaplay').addEventListener('click', function(ev) {
 var createErrorFn = function(action) {
   return function (err) {
     var reason = "Player is not reachable.";
-    /* if (typeof err.cors !== "undefined") {
+    if (typeof err.cors !== "undefined") {
       reason = "Player is not reachable.";
-    } else */
-    if (typeof err.code !== "undefined") {
+    } else if (typeof err.code !== "undefined") {
       reason = "Player is not reachable. (" + err.code + ")";
+    } else if (typeof err.message !== "undefined") {
+      reason = err.message;
     }
     failure("Couldn't " + action + ": " + reason, true);
   };
