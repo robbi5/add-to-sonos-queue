@@ -28,6 +28,7 @@ Ideas
 * Queue whole sets at once
 * Add support for different rooms/zones
 * Autodiscovery (chrome.sockets.udp must be first available to extensions)
+* Add buttons directly to track listings
 
 Development
 -----------
