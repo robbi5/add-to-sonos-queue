@@ -69,7 +69,11 @@ var gotSoundCloudTrack = function(data) {
   document.getElementById('single_track_view').classList.add('selected');
 
   var wrap = document.getElementById("track0");
-  wrap.querySelector('.track__art img').src = data.artwork_url;
+  var image_url = data.artwork_url;
+  if (image_url == null) {
+    image_url = data.user.avatar_url;
+  }
+  wrap.querySelector('.track__art img').src = image_url;
   wrap.querySelector('.track__username').innerText = data.user.username;
   wrap.querySelector('.track__title').innerText = data.title;
   wrap.querySelector('.soundcloud-logo').href = data.permalink_url;
