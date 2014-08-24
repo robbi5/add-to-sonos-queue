@@ -1,10 +1,10 @@
-"use strict";
+'use strict';
 
 var request = require('browser-request'),
     Sonos = require('sonos').Sonos;
 
-var SETTINGS_URL = chrome.runtime.getURL("/settings/settings.html"),
-    SC_CLIENT_ID = "23e4216436888333b85bec82a5e7c075",
+var SETTINGS_URL = chrome.runtime.getURL('/settings/settings.html'),
+    SC_CLIENT_ID = '23e4216436888333b85bec82a5e7c075',
     SONOS_DEVICE = null,
     CURRENT_TRACK = null;
 
@@ -26,7 +26,7 @@ var gotSoundCloudUrl = function(url) {
   if (SONOS_DEVICE == null) return;
   url = encodeURIComponent(url);
   request({
-    uri: "https://api.soundcloud.com/resolve.json?url=" + url + "&client_id=" + SC_CLIENT_ID,
+    uri: 'https://api.soundcloud.com/resolve.json?url=' + url + '&client_id=' + SC_CLIENT_ID,
     json: true,
     timeout: 10 * 1000
   }, function(err, res, data) {
@@ -46,7 +46,7 @@ var failure = function(message, displaySettings) {
   );
   var failure_view = document.getElementById('sc_failure_view');
   failure_view.classList.add('selected');
-  document.getElementById("failure__message").innerText = message;
+  document.getElementById('failure__message').innerText = message;
   if (displaySettings) {
     failure_view.classList.add('has-settings');
   } else {
@@ -55,11 +55,11 @@ var failure = function(message, displaySettings) {
 };
 
 var failedToLoad = function() {
-  failure("Failed to load track details");
+  failure('Failed to load track details');
 };
 
 var notATrackPage = function() {
-  failure("This doesn't look like a track page");
+  failure('This doesn\'t look like a track page');
 };
 
 var gotSoundCloudTrack = function(data) {
@@ -68,7 +68,7 @@ var gotSoundCloudTrack = function(data) {
 
   document.getElementById('single_track_view').classList.add('selected');
 
-  var wrap = document.getElementById("track0");
+  var wrap = document.getElementById('track0');
   var image_url = data.artwork_url;
   if (image_url == null) {
     image_url = data.user.avatar_url;
@@ -123,15 +123,15 @@ document.getElementById('instaplay').addEventListener('click', function(ev) {
 
 var createErrorFn = function(action) {
   return function (err) {
-    var reason = "Player is not reachable.";
-    if (typeof err.cors !== "undefined") {
-      reason = "Player is not reachable.";
-    } else if (typeof err.code !== "undefined") {
-      reason = "Player is not reachable. (" + err.code + ")";
-    } else if (typeof err.message !== "undefined") {
+    var reason = 'Player is not reachable.';
+    if (typeof err.cors !== 'undefined') {
+      reason = 'Player is not reachable.';
+    } else if (typeof err.code !== 'undefined') {
+      reason = 'Player is not reachable. (' + err.code + ')';
+    } else if (typeof err.message !== 'undefined') {
       reason = err.message;
     }
-    failure("Couldn't " + action + ": " + reason, true);
+    failure('Couldn\'t ' + action + ': ' + reason, true);
   };
 }
 
