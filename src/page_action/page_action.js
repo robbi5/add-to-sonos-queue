@@ -6,7 +6,7 @@ var request = require('browser-request'),
 var SETTINGS_URL = chrome.runtime.getURL('/settings/settings.html'),
     SC_CLIENT_ID = '23e4216436888333b85bec82a5e7c075',
     SONOS_DEVICE = null,
-    CURRENT_TRACK = null;
+    CURRENT_ITEM = null;
 
 chrome.storage.sync.get({
   player_ip: ''
@@ -63,16 +63,13 @@ var notATrackPage = function() {
 };
 
 var gotSoundCloudTrack = function(data) {
-  if (data.kind != "track") return notATrackPage();
-  CURRENT_TRACK = data;
+  if (data.kind != 'track' && data.kind != 'playlist') return notATrackPage();
+  CURRENT_ITEM = data;
 
-  document.getElementById('single_track_view').classList.add('selected');
+  document.getElementById('track_view').classList.add('selected');
 
   var wrap = document.getElementById('track0');
-  var image_url = data.artwork_url;
-  if (image_url == null) {
-    image_url = data.user.avatar_url;
-  }
+  var image_url = data.artwork_url || data.user.avatar_url;
   wrap.querySelector('.track__art img').src = image_url;
   wrap.querySelector('.track__username').innerText = data.user.username;
   wrap.querySelector('.track__title').innerText = data.title;
@@ -81,30 +78,55 @@ var gotSoundCloudTrack = function(data) {
   if (data.streamable == false) {
     document.getElementById('actions').innerText = 'Sorry, this track has Sonos streaming disabled.';
   }
+
+  if (data.kind == 'playlist') return gotSoundCloudPlaylist(data);
+};
+
+var gotSoundCloudPlaylist = function(data) {
+  // add track list
+  document.getElementById('track_view').classList.add('is-playlist');
+  var list = document.getElementById('playlist');
+  var tpl = list.removeChild(list.querySelector('.compactTrack'));
+  data.tracks.forEach(function(track) {
+    var el = tpl.cloneNode(true);
+    var image_url = track.artwork_url || data.user.avatar_url;
+    el.querySelector('.track__art img').src = image_url;
+    el.querySelector('.track__title').innerText = track.title;
+    list.appendChild(el);
+  });
+
+  // rename button
+  document.getElementById('add_to_queue').innerText = 'Add Playlist to Sonos Queue';
+  document.getElementById('instaplay').disabled = true;
 };
 
 document.getElementById('add_to_queue').addEventListener('click', function(ev) {
   ev.preventDefault();
-  if (CURRENT_TRACK == null) return;
+  if (CURRENT_ITEM == null) return;
   var self = this;
   self.classList.remove('success');
-  addSoundCloudTrackToQueue(
-    CURRENT_TRACK,
-    createErrorFn("add track to queue"),
-    function(data) {
-      self.classList.add('success');
-    }
-  );
+  self.classList.add('working');
+
+  var done = function () {
+    self.classList.remove('working');
+    self.classList.add('success');
+  };
+
+  if (CURRENT_ITEM.kind == 'track') {
+    addSoundCloudTrackToQueue(CURRENT_ITEM, createErrorFn('add track to queue'), done);
+  } else {
+    addSoundCloudPlaylistToQueue(CURRENT_ITEM, createErrorFn('add tracks to queue'), done);
+  }
 }, false);
 
 document.getElementById('instaplay').addEventListener('click', function(ev) {
   ev.preventDefault();
-  if (CURRENT_TRACK == null) return;
+  if (CURRENT_ITEM == null) return;
   var self = this;
   self.classList.remove('success');
   play(
-    CURRENT_TRACK,
-    createErrorFn("play track"),
+    CURRENT_ITEM,
+    createErrorFn('play track'),
     function(data) {
       self.classList.add('success');
     }
@@ -135,20 +157,21 @@ var createErrorFn = function(action) {
   };
 }
 
+var htmlEntities = function(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+};
+
+// requires data.id and data.title
 var wrapSoundCloudTrack = function(data) {
   var trackid = data.id;
-  var trackurl = "x-sonos-http:track%3a" + trackid + ".mp3?sid=160&amp;flags=32";
+  var trackuri = "x-sonos-http:track%3a" + trackid + ".mp3?sid=160&amp;flags=32";
 
-  var enc = function(str) {
-    return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
-  };
-
-  var title = enc(data.title);
+  var title = htmlEntities(data.title);
   var didl = '<DIDL-Lite xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/" xmlns:r="urn:schemas-rinconnetworks-com:metadata-1-0/" xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/">'
            + '<item id="00030020track%3a' + trackid + '" restricted="true">'
              + '<dc:title>' + title + '</dc:title>'
@@ -156,12 +179,39 @@ var wrapSoundCloudTrack = function(data) {
              + '<desc id="cdudn" nameSpace="urn:schemas-rinconnetworks-com:metadata-1-0/">SA_RINCON40967_X_#Svc40967-0-Token</desc>'
            + '</item>'
            + '</DIDL-Lite>';
-   return {uri: trackurl, metadata: didl};
+   return {uri: trackuri, metadata: didl};
+};
+
+// requires data.id and data.title
+var wrapSoundCloudPlaylist = function(data) {
+  var playlistid = data.id;
+  var playlisturi = "x-rincon-cpcontainer:0006006cplaylist%3a" + playlistid;
+
+  var title = htmlEntities(data.title);
+  var didl = '<DIDL-Lite xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/" xmlns:r="urn:schemas-rinconnetworks-com:metadata-1-0/" xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/">'
+           + '<item id="0006006cplaylist%3a' + playlistid + '" restricted="true">'
+             + '<dc:title>' + title + '</dc:title>'
+             + '<upnp:class>object.container.playlistContainer</upnp:class>'
+             + '<desc id="cdudn" nameSpace="urn:schemas-rinconnetworks-com:metadata-1-0/">SA_RINCON40967_X_#Svc40967-0-Token</desc>'
+           + '</item>'
+           + '</DIDL-Lite>';
+
+   return {uri: playlisturi, metadata: didl};
 };
 
 var addSoundCloudTrackToQueue = function(data, errorCb, successCb) {
   var track = wrapSoundCloudTrack(data);
   SONOS_DEVICE.queue(track, function(err, data) {
+    if (err) {
+      return errorCb(err);
+    }
+    return successCb(data);
+  });
+};
+
+var addSoundCloudPlaylistToQueue = function(data, errorCb, successCb) {
+  var playlist = wrapSoundCloudPlaylist(data);
+  SONOS_DEVICE.queue(playlist, function(err, data) {
     if (err) {
       return errorCb(err);
     }

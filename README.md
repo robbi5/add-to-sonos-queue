@@ -1,7 +1,7 @@
 Add to Sonos Queue
 ==================
 
-Chrome Extension that adds the ability to add tracks from SoundCloud straight to your Sonos queue.
+Chrome Extension that adds the ability to add tracks and playlists from SoundCloud straight to your Sonos queue.
 
 [![Flattr this git repo](https://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=robbi5&url=https%3A%2F%2Fgithub.com%2Frobbi5%2Fadd-to-sonos-queue)
 
@@ -25,7 +25,6 @@ Permissions
 Ideas
 -----
 * Inject in SoundCloud player widget iframes and add an "add to sonos queue" button
-* Queue whole sets at once
 * Add support for different rooms/zones
 * Autodiscovery (chrome.sockets.udp must be first available to extensions)
 * Add buttons directly to track listings

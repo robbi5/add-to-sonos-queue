@@ -86,6 +86,39 @@
       padding: 5px 0;
     }
 
+    #playlist {
+      display: none;
+      margin: 0;
+      padding: 0;
+      max-height: 110px;
+      overflow-y: scroll;
+    }
+    #track_view.is-playlist #playlist {
+      display: block;
+    }
+
+    .compactTrack {
+      display: block;
+      border-bottom: 1px solid #F2F2F2;
+    }
+    .compactTrack:last-child {
+      border-bottom: 0;
+    }
+    .compactTrack .track__art {
+      margin: 1px 5px 2px;
+      padding: 0;
+      width: 20px;
+      height: 20px;
+    }
+    .compactTrack .track__art img {
+      width: 20px;
+      height: 20px;
+    }
+    .compactTrack .track__title {
+      padding-top: 3px;
+      font-size: 12px;
+    }
+
     /* --- */
 
     #actions {
@@ -115,8 +148,15 @@
       box-sizing: border-box;
       outline: none;
     }
+    button[disabled] {
+      cursor: default;
+      opacity: 0.8;
+    }
     button:hover {
       background-color: #EDEDED;
+    }
+    button[disabled]:hover {
+      background-color: #F8F8F8;
     }
     button:after {
       position: absolute;
@@ -136,6 +176,21 @@
     }
     button.success:after {
       content: "\2714";
+      opacity: 1;
+    }
+    .is-playlist button.working {
+      padding-right: 30px;
+    }
+    .is-playlist button:after {
+      right: 10px;
+    }
+    button.working:after {
+      content: "";
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      background: url("loader.gif") no-repeat center center;
+      background-size: 18px 18px;
       opacity: 1;
     }
     #add_to_queue {
@@ -168,7 +223,7 @@
     <p id="failure__settings"><button rel="settings">Open Settings</button></p>
   </section>
 
-  <section id="single_track_view">
+  <section id="track_view">
     <div id="track0" class="cf sc__track">
       <div class="track__art">
         <img src='' />
@@ -183,6 +238,12 @@
         </p>
       </div>
     </div>
+    <ul id="playlist">
+      <li class="compactTrack cf">
+        <div class="track__art"><img src='' /></div>
+        <div class="track__title">Loading&hellip;</div>
+      </li>
+    </ul>
     <div id="actions">
       <button id="add_to_queue">Add to Sonos Queue</button>
       <button id="instaplay">Play</button>
