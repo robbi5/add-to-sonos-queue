@@ -1,12 +1,12 @@
 'use strict';
 
-var request = require('browser-request'),
-    Sonos = require('sonos').Sonos;
+var request = require('browser-request');
+var Sonos = require('sonos').Sonos;
 
-var SETTINGS_URL = chrome.runtime.getURL('/settings/settings.html'),
-    SC_CLIENT_ID = '23e4216436888333b85bec82a5e7c075',
-    SONOS_DEVICE = null,
-    CURRENT_ITEM = null;
+var SETTINGS_URL = chrome.runtime.getURL('/settings/settings.html');
+var SC_CLIENT_ID = '23e4216436888333b85bec82a5e7c075';
+var SONOS_DEVICE = null;
+var CURRENT_ITEM = null;
 
 chrome.storage.sync.get({
   player_ip: ''
@@ -23,15 +23,15 @@ var requireSetUp = function() {
 };
 
 var gotSoundCloudUrl = function(url) {
-  if (SONOS_DEVICE == null) return;
+  if (SONOS_DEVICE == null) { return; }
   url = encodeURIComponent(url);
   request({
     uri: 'https://api.soundcloud.com/resolve.json?url=' + url + '&client_id=' + SC_CLIENT_ID,
     json: true,
     timeout: 10 * 1000
   }, function(err, res, data) {
-    if (err) return failedToLoad();
-    if (res.statusCode !== 200) return notATrackPage();
+    if (err) { return failedToLoad(); }
+    if (res.statusCode !== 200) { return notATrackPage(); }
     gotSoundCloudTrack(data);
   });
 };
@@ -63,7 +63,7 @@ var notATrackPage = function() {
 };
 
 var gotSoundCloudTrack = function(data) {
-  if (data.kind != 'track' && data.kind != 'playlist') return notATrackPage();
+  if (data.kind != 'track' && data.kind != 'playlist') { return notATrackPage(); }
   CURRENT_ITEM = data;
 
   document.getElementById('track_view').classList.add('selected');
@@ -79,7 +79,9 @@ var gotSoundCloudTrack = function(data) {
     document.getElementById('actions').innerText = 'Sorry, this track has Sonos streaming disabled.';
   }
 
-  if (data.kind == 'playlist') return gotSoundCloudPlaylist(data);
+  if (data.kind == 'playlist') {
+    return gotSoundCloudPlaylist(data);
+  }
 };
 
 var gotSoundCloudPlaylist = function(data) {
@@ -102,7 +104,7 @@ var gotSoundCloudPlaylist = function(data) {
 
 document.getElementById('add_to_queue').addEventListener('click', function(ev) {
   ev.preventDefault();
-  if (CURRENT_ITEM == null) return;
+  if (CURRENT_ITEM == null) { return; }
   var self = this;
   self.classList.remove('success');
   self.classList.add('working');
@@ -121,7 +123,7 @@ document.getElementById('add_to_queue').addEventListener('click', function(ev) {
 
 document.getElementById('instaplay').addEventListener('click', function(ev) {
   ev.preventDefault();
-  if (CURRENT_ITEM == null) return;
+  if (CURRENT_ITEM == null) { return; }
   var self = this;
   self.classList.remove('success');
   play(
