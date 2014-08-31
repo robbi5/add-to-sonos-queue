@@ -4,6 +4,7 @@
 // * added 5 second timeout
 // * removed unused functions
 // * queue added (queueNext simply sets the url, queue uses the current queue)
+// * queueMultiple added
 
 /**
  * Constants
@@ -192,6 +193,49 @@ Sonos.prototype.queue = function(uri, callback) {
     }
   });
 };
+
+/**
+ * Queue multiple Songs
+ * @param  {Array}   uris      Array of URIs to Audio Streams or Objects containing options (uri, metadata)
+ * @param  {Function} callback (err, queued)
+ */
+Sonos.prototype.queueMultiple = function(songs, callback) {
+  debug('Sonos.queueMultiple(%j, %j)', songs, callback);
+
+  var uris = [], metadata = [];
+
+  songs.forEach(function(uri){
+    if (typeof uri === 'object') {
+      uris.push(uri.uri);
+      metadata.push(htmlEntities(uri.metadata || ''));
+    } else {
+      uris.push(uri);
+      metadata.push('');
+    }
+  });
+
+  var action = '"urn:schemas-upnp-org:service:AVTransport:1#AddMultipleURIsToQueue"';
+  var body = ['<u:AddMultipleURIsToQueue xmlns:u="urn:schemas-upnp-org:service:AVTransport:1">',
+  '<InstanceID>0</InstanceID>',
+  '<UpdateID>0</UpdateID>',
+  '<NumberOfURIs>' + songs.length + '</NumberOfURIs>',
+  '<EnqueuedURIs>' + uris.join(' ') + '</EnqueuedURIs>',
+  '<EnqueuedURIsMetaData>' + metadata.join(' ') + '</EnqueuedURIsMetaData>',
+  '<ContainerURI></ContainerURI>',
+  '<ContainerMetaData></ContainerMetaData>',
+  '<DesiredFirstTrackNumberEnqueued>0</DesiredFirstTrackNumberEnqueued>',
+  '<EnqueueAsNext>1</EnqueueAsNext>',
+  '</u:AddMultipleURIsToQueue>'].join('');
+  this.request(TRANSPORT_ENDPOINT, action, body, 'u:AddMultipleURIsToQueueResponse', function(err, data) {
+    if (callback) {
+      return callback(err, data);
+    } else {
+      return null;
+    }
+  });
+};
+
+
 
 /**
  * Export

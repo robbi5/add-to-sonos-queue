@@ -25,6 +25,12 @@ var requireSetUp = function() {
 
 var gotSoundCloudUrl = function(url) {
   if (SONOS_DEVICE == null) { return; }
+  var kind;
+  // resolve doesn't know /likes, but it lists tracks if you request /favorites.
+  if (url.match(/soundcloud.com\/([^\/]+)\/likes$/)) {
+    url = url.replace(/\/likes$/, '/favorites');
+    kind = 'list';
+  }
   url = encodeURIComponent(url);
   request({
     uri: 'https://api.soundcloud.com/resolve.json?url=' + url + '&client_id=' + SC_CLIENT_ID,
@@ -33,7 +39,7 @@ var gotSoundCloudUrl = function(url) {
   }, function(err, res, data) {
     if (err) { return failedToLoad(); }
     if (res.statusCode !== 200) { return notATrackPage(); }
-    gotSoundCloudTrack(data);
+    gotSoundCloudTrack(data, kind);
   });
 };
 
@@ -63,26 +69,39 @@ var notATrackPage = function() {
   failure('This doesn\'t look like a track page');
 };
 
-var gotSoundCloudTrack = function(data) {
-  if (data.kind != 'track' && data.kind != 'playlist') { return notATrackPage(); }
+var gotSoundCloudTrack = function(data, kind) {
+  var kind = kind || data.kind;
+  if (kind != 'track' && kind != 'playlist' && kind != 'list') { return notATrackPage(); }
+  if (kind == 'list') {
+    data = wrapPureTrackList(data);
+  }
+
   CURRENT_ITEM = data;
 
   document.getElementById('track_view').classList.add('selected');
 
   var wrap = document.getElementById('track0');
-  var image_url = data.artwork_url || data.user.avatar_url;
-  wrap.querySelector('.track__art img').src = image_url;
-  wrap.querySelector('.track__username').innerText = data.user.username;
-  wrap.querySelector('.track__title').innerText = data.title;
-  wrap.querySelector('.soundcloud-logo').href = data.permalink_url;
+  if (typeof data.title !== 'undefined') {
+    var image_url = data.artwork_url || data.user.avatar_url;
+    wrap.querySelector('.track__art img').src = image_url;
+    wrap.querySelector('.track__username').innerText = data.user.username;
+    wrap.querySelector('.track__title').innerText = data.title;
+    wrap.querySelector('.soundcloud-logo').href = data.permalink_url;
+  } else {
+    wrap.classList.add('hidden');
+  }
 
   if (data.streamable == false) {
     document.getElementById('actions').innerText = 'Sorry, this track has Sonos streaming disabled.';
   }
 
-  if (data.kind == 'playlist') {
-    return gotSoundCloudPlaylist(data);
+  if (kind == 'list' || kind == 'playlist') {
+    gotSoundCloudPlaylist(data);
   }
+};
+
+var wrapPureTrackList = function (data) {
+  return {kind: 'list', tracks: data};
 };
 
 var gotSoundCloudPlaylist = function(data) {
@@ -92,7 +111,7 @@ var gotSoundCloudPlaylist = function(data) {
   var tpl = list.removeChild(list.querySelector('.compactTrack'));
   data.tracks.forEach(function(track) {
     var el = tpl.cloneNode(true);
-    var image_url = track.artwork_url || data.user.avatar_url;
+    var image_url = track.artwork_url || track.user.avatar_url || data.user.avatar_url;
     el.querySelector('.track__art img').src = image_url;
     el.querySelector('.track__title').innerText = track.title;
     list.appendChild(el);
@@ -117,6 +136,8 @@ document.getElementById('add_to_queue').addEventListener('click', function(ev) {
 
   if (CURRENT_ITEM.kind == 'track') {
     addSoundCloudTrackToQueue(CURRENT_ITEM).then(done).fail(createErrorFn('add track to queue'));
+  } else if (CURRENT_ITEM.kind == 'list') {
+    addMultipleSoundCloudTracksToQueue(CURRENT_ITEM.tracks).then(done).fail(createErrorFn('add tracks to queue'));
   } else {
     addSoundCloudPlaylistToQueue(CURRENT_ITEM).then(done).fail(createErrorFn('add tracks to queue'));
   }
@@ -170,7 +191,7 @@ var htmlEntities = function(str) {
 // requires data.id and data.title
 var wrapSoundCloudTrack = function(data) {
   var trackid = data.id;
-  var trackuri = "x-sonos-http:track%3a" + trackid + ".mp3?sid=160&amp;flags=32";
+  var trackuri = 'x-sonos-http:track%3a' + trackid + '.mp3?sid=160&amp;flags=32';
 
   var title = htmlEntities(data.title);
   var didl = '<DIDL-Lite xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/" xmlns:r="urn:schemas-rinconnetworks-com:metadata-1-0/" xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/">'
@@ -186,7 +207,7 @@ var wrapSoundCloudTrack = function(data) {
 // requires data.id and data.title
 var wrapSoundCloudPlaylist = function(data) {
   var playlistid = data.id;
-  var playlisturi = "x-rincon-cpcontainer:0006006cplaylist%3a" + playlistid;
+  var playlisturi = 'x-rincon-cpcontainer:0006006cplaylist%3a' + playlistid;
 
   var title = htmlEntities(data.title);
   var didl = '<DIDL-Lite xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/" xmlns:r="urn:schemas-rinconnetworks-com:metadata-1-0/" xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/">'
@@ -204,6 +225,11 @@ var wrapSoundCloudPlaylist = function(data) {
 var addSoundCloudTrackToQueue = function(data) {
   var track = wrapSoundCloudTrack(data);
   return Q.ninvoke(SONOS_DEVICE, "queue", track);
+};
+
+var addMultipleSoundCloudTracksToQueue = function(data) {
+  var tracks = data.map(function(track){ return wrapSoundCloudTrack(track); });
+  return Q.ninvoke(SONOS_DEVICE, "queueMultiple", tracks);
 };
 
 var addSoundCloudPlaylistToQueue = function(data) {
