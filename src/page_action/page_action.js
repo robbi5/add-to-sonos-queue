@@ -1,5 +1,6 @@
 'use strict';
 
+var Q = require('Q');
 var request = require('browser-request');
 var Sonos = require('sonos').Sonos;
 
@@ -115,9 +116,9 @@ document.getElementById('add_to_queue').addEventListener('click', function(ev) {
   };
 
   if (CURRENT_ITEM.kind == 'track') {
-    addSoundCloudTrackToQueue(CURRENT_ITEM, createErrorFn('add track to queue'), done);
+    addSoundCloudTrackToQueue(CURRENT_ITEM).then(done).fail(createErrorFn('add track to queue'));
   } else {
-    addSoundCloudPlaylistToQueue(CURRENT_ITEM, createErrorFn('add tracks to queue'), done);
+    addSoundCloudPlaylistToQueue(CURRENT_ITEM).then(done).fail(createErrorFn('add tracks to queue'));
   }
 }, false);
 
@@ -126,13 +127,11 @@ document.getElementById('instaplay').addEventListener('click', function(ev) {
   if (CURRENT_ITEM == null) { return; }
   var self = this;
   self.classList.remove('success');
-  play(
-    CURRENT_ITEM,
-    createErrorFn('play track'),
-    function(data) {
+  play(CURRENT_ITEM)
+    .then(function(data) {
       self.classList.add('success');
-    }
-  );
+    })
+    .fail(createErrorFn('play track'));
 }, false);
 
 [].forEach.call(
@@ -201,34 +200,20 @@ var wrapSoundCloudPlaylist = function(data) {
    return {uri: playlisturi, metadata: didl};
 };
 
-var addSoundCloudTrackToQueue = function(data, errorCb, successCb) {
+// wrap Sonos calls in promises:
+var addSoundCloudTrackToQueue = function(data) {
   var track = wrapSoundCloudTrack(data);
-  SONOS_DEVICE.queue(track, function(err, data) {
-    if (err) {
-      return errorCb(err);
-    }
-    return successCb(data);
-  });
+  return Q.ninvoke(SONOS_DEVICE, "queue", track);
 };
 
-var addSoundCloudPlaylistToQueue = function(data, errorCb, successCb) {
+var addSoundCloudPlaylistToQueue = function(data) {
   var playlist = wrapSoundCloudPlaylist(data);
-  SONOS_DEVICE.queue(playlist, function(err, data) {
-    if (err) {
-      return errorCb(err);
-    }
-    return successCb(data);
-  });
+  return Q.ninvoke(SONOS_DEVICE, "queue", playlist);
 };
 
-var play = function(data, errorCb, successCb) {
+var play = function(data) {
   var track = wrapSoundCloudTrack(data);
-  SONOS_DEVICE.play(track, function(err, data) {
-    if (err) {
-      return errorCb(err);
-    }
-    return successCb(data);
-  });
+  return Q.ninvoke(SONOS_DEVICE, "play", track);
 };
 
 // get current url of page
