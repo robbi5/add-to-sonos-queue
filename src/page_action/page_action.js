@@ -12,7 +12,7 @@ var CURRENT_ITEM = null;
 chrome.storage.sync.get({
   player_ip: ''
 }, function(items) {
-  if (items.player_ip == '') {
+  if (items.player_ip === '') {
     requireSetUp();
     return;
   }
@@ -24,7 +24,7 @@ var requireSetUp = function() {
 };
 
 var gotSoundCloudUrl = function(url) {
-  if (SONOS_DEVICE == null) { return; }
+  if (SONOS_DEVICE === null) { return; }
   var kind;
   // resolve doesn't know /likes, but it lists tracks if you request /favorites.
   if (url.match(/soundcloud.com\/([^\/]+)\/likes$/)) {
@@ -44,7 +44,7 @@ var gotSoundCloudUrl = function(url) {
 };
 
 var failure = function(message, displaySettings) {
-  var displaySettings = displaySettings || false;
+  displaySettings = displaySettings || false;
   [].forEach.call(
     document.querySelectorAll('section.selected'),
     function(el) {
@@ -70,7 +70,7 @@ var notATrackPage = function() {
 };
 
 var gotSoundCloudTrack = function(data, kind) {
-  var kind = kind || data.kind;
+  kind = kind || data.kind;
   if (kind != 'track' && kind != 'playlist' && kind != 'list') { return notATrackPage(); }
   if (kind == 'list') {
     data = wrapPureTrackList(data);
@@ -91,7 +91,7 @@ var gotSoundCloudTrack = function(data, kind) {
     wrap.classList.add('hidden');
   }
 
-  if (data.streamable == false) {
+  if (data.streamable === false) {
     document.getElementById('actions').innerText = 'Sorry, this track has Sonos streaming disabled.';
   }
 
@@ -124,7 +124,7 @@ var gotSoundCloudPlaylist = function(data) {
 
 document.getElementById('add_to_queue').addEventListener('click', function(ev) {
   ev.preventDefault();
-  if (CURRENT_ITEM == null) { return; }
+  if (CURRENT_ITEM === null) { return; }
   var self = this;
   self.classList.remove('success');
   self.classList.add('working');
@@ -145,11 +145,11 @@ document.getElementById('add_to_queue').addEventListener('click', function(ev) {
 
 document.getElementById('instaplay').addEventListener('click', function(ev) {
   ev.preventDefault();
-  if (CURRENT_ITEM == null) { return; }
+  if (CURRENT_ITEM === null) { return; }
   var self = this;
   self.classList.remove('success');
   play(CURRENT_ITEM)
-    .then(function(data) {
+    .then(function() {
       self.classList.add('success');
     })
     .fail(createErrorFn('play track'));
@@ -177,7 +177,7 @@ var createErrorFn = function(action) {
     }
     failure('Couldn\'t ' + action + ': ' + reason, true);
   };
-}
+};
 
 var htmlEntities = function(str) {
   return String(str)
@@ -224,22 +224,22 @@ var wrapSoundCloudPlaylist = function(data) {
 // wrap Sonos calls in promises:
 var addSoundCloudTrackToQueue = function(data) {
   var track = wrapSoundCloudTrack(data);
-  return Q.ninvoke(SONOS_DEVICE, "queue", track);
+  return Q.ninvoke(SONOS_DEVICE, 'queue', track);
 };
 
 var addMultipleSoundCloudTracksToQueue = function(data) {
   var tracks = data.map(function(track){ return wrapSoundCloudTrack(track); });
-  return Q.ninvoke(SONOS_DEVICE, "queueMultiple", tracks);
+  return Q.ninvoke(SONOS_DEVICE, 'queueMultiple', tracks);
 };
 
 var addSoundCloudPlaylistToQueue = function(data) {
   var playlist = wrapSoundCloudPlaylist(data);
-  return Q.ninvoke(SONOS_DEVICE, "queue", playlist);
+  return Q.ninvoke(SONOS_DEVICE, 'queue', playlist);
 };
 
 var play = function(data) {
   var track = wrapSoundCloudTrack(data);
-  return Q.ninvoke(SONOS_DEVICE, "play", track);
+  return Q.ninvoke(SONOS_DEVICE, 'play', track);
 };
 
 // get current url of page
