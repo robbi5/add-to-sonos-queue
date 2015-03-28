@@ -1,0 +1,48 @@
+.sc-button-addtoset.ats-collapse,
+.sc-button-medium.sc-button-addtoset.ats-collapse,
+.ats-collapse {
+  text-indent: -400px;
+}
+.sc-button-addtoset.ats-collapse:before,
+.ats-collapse:before {
+  left: 1px;
+}
+.ats-button {
+
+}
+.ats-button:before {
+  /* from .sc-button-addtoset:before */
+  content: "";
+  display: block;
+  position: absolute;
+  background-repeat: no-repeat;
+  background-position: center center;
+  width: 20px;
+  height: 20px;
+  top: 0;
+  bottom: 0;
+  margin: auto 0;
+  /* own */
+  background-size: 16px 16px;
+  background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDE2IDE2Ij48cGF0aCBkPSJtMTIgMyAwLTIgMiAwIDAgMiAyIDAgMCAyLTIgMCAwIDItMiAwIDAtMi0yIDAgMC0yeiIgc3R5bGU9ImZpbGwtcnVsZTpldmVub2RkO2ZpbGw6IzIyMiIvPjxwYXRoIGQ9Im0xLjUzMjQ2NjMgNi40NTg0ODUxIDAgNi41NzgwODA5LTEuNTMyNDY2MyAwIDAtMTAuMjkyNjYxOSA2Ljg1NzgyNzggNi44NjkyOTMgMC02LjYxMzE5NzEgMS41MzMzNDQ4IDAgMCAxMC4zMzAxNDItNi44NTg3MDYzLTYuODcxNjU2OSIgc3R5bGU9ImZpbGwtcnVsZTpub256ZXJvO2ZpbGw6IzIyMiIvPjwvc3ZnPg==)
+}
+
+.sc-button-small.ats-button:before {
+  left: 1px;
+}
+
+.sc-button-medium.ats-button:before {
+  left: 6px;
+}
+
+.ats-button.ats-success:before {
+  background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDE2IDE2Ij48cGF0aCBkPSJtMTIgMyAwLTIgMiAwIDAgMiAyIDAgMCAyLTIgMCAwIDItMiAwIDAtMi0yIDAgMC0yeiIgc3R5bGU9ImZpbGwtcnVsZTpldmVub2RkO2ZpbGw6IzI3QUU2MCIvPjxwYXRoIGQ9Im0xLjUzMjQ2NjMgNi40NTg0ODUxIDAgNi41NzgwODA5LTEuNTMyNDY2MyAwIDAtMTAuMjkyNjYxOSA2Ljg1NzgyNzggNi44NjkyOTMgMC02LjYxMzE5NzEgMS41MzMzNDQ4IDAgMCAxMC4zMzAxNDItNi44NTg3MDYzLTYuODcxNjU2OSIgc3R5bGU9ImZpbGwtcnVsZTpub256ZXJvO2ZpbGw6IzI3QUU2MCIvPjwvc3ZnPg==)
+}
+
+.ats-button.ats-failure:before {
+  background-image: url(data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDE2IDE2Ij48cGF0aCBkPSJtMTIgMyAwLTIgMiAwIDAgMiAyIDAgMCAyLTIgMCAwIDItMiAwIDAtMi0yIDAgMC0yeiIgc3R5bGU9ImZpbGwtcnVsZTpldmVub2RkO2ZpbGw6I2FlMjczMiIvPjxwYXRoIGQ9Im0xLjUzMjQ2NjMgNi40NTg0ODUxIDAgNi41NzgwODA5LTEuNTMyNDY2MyAwIDAtMTAuMjkyNjYxOSA2Ljg1NzgyNzggNi44NjkyOTMgMC02LjYxMzE5NzEgMS41MzMzNDQ4IDAgMCAxMC4zMzAxNDItNi44NTg3MDYzLTYuODcxNjU2OSIgc3R5bGU9ImZpbGwtcnVsZTpub256ZXJvO2ZpbGw6I2FlMjczMiIvPjwvc3ZnPg==)
+}
+
+.ats-button.ats-loading:before {
+  background-image: url('chrome-extension://__MSG_@@extension_id__/content_script/loading.gif')
+}

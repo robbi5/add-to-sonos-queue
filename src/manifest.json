@@ -24,6 +24,16 @@
     "default_title": "Add to Sonos Queue",
     "default_popup": "page_action/page_action.html"
   },
+  "content_scripts": [
+    {
+      "matches": ["https://soundcloud.com/*"],
+      "css": ["css/add-to-sonos-queue.css"],
+      "js": ["js/sc.js"]
+    }
+  ],
+  "web_accessible_resources": [
+    "content_script/loading.gif"
+  ],
   "options_page": "settings/settings.html",
   "options_ui": {
     "page": "settings/options.html",

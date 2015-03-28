@@ -2,11 +2,32 @@ module.exports = function(grunt) {
   grunt.initConfig({
     clean: ['dist/'],
     browserify: {
+      background: {
+        src: ['src/lib/sonos.js', 'src/js/background.js'],
+        dest: 'dist/js/background.js',
+        options: {
+          alias: ['./src/lib/sonos.js:sonos']
+        }
+      },
       app: {
         src: ['src/lib/sonos.js', 'src/page_action/page_action.js'],
         dest: 'dist/js/app.js',
         options: {
           alias: ['./src/lib/sonos.js:sonos']
+        }
+      },
+      content_sc: {
+        src: ['src/lib/mutation-summary.js', 'src/content_script/sc.js'],
+        dest: 'dist/js/sc.js',
+        options: {
+          alias: ['./src/lib/mutation-summary.js:mutation-summary']
+        }
+      },
+      content_sc_widget: {
+        src: ['src/lib/mutation-summary.js', 'src/content_script/sc-widget.js'],
+        dest: 'dist/js/sc-widget.js',
+        options: {
+          alias: ['./src/lib/mutation-summary.js:mutation-summary']
         }
       }
     },
@@ -22,10 +43,17 @@ module.exports = function(grunt) {
         flatten: true,
         filter: 'isFile'
       },
-      background: {
+      css: {
         expand: true,
-        src: 'src/js/**',
-        dest: 'dist/js/',
+        src: 'src/css/**',
+        dest: 'dist/css/',
+        flatten: true,
+        filter: 'isFile'
+      },
+      content_script: {
+        expand: true,
+        src: 'src/content_script/*.gif',
+        dest: 'dist/content_script/',
         flatten: true,
         filter: 'isFile'
       },
