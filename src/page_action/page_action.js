@@ -4,7 +4,19 @@ var Q = require('Q');
 var request = require('browser-request');
 var Sonos = require('sonos').Sonos;
 
-var SETTINGS_URL = chrome.runtime.getURL('/settings/settings.html');
+var SETTINGS_URL = (function() {
+  // only Chrome >= 40 supports new optionsV2
+  try {
+    var ver = parseInt(navigator.appVersion.match(/Chrome\/(\d+)\./)[1], 10);
+    if (ver >= 40) {
+      return 'chrome://extensions?options=' + chrome.runtime.id;
+    } else {
+      return chrome.runtime.getURL('/settings/settings.html');
+    }
+  } catch(e) {
+    return chrome.runtime.getURL('/settings/settings.html');
+  }
+})();
 var SC_CLIENT_ID = '23e4216436888333b85bec82a5e7c075';
 var SONOS_DEVICE = null;
 var CURRENT_ITEM = null;
@@ -160,7 +172,7 @@ document.getElementById('instaplay').addEventListener('click', function(ev) {
   function(el) {
     el.addEventListener('click', function(ev) {
       ev.preventDefault();
-      window.open(SETTINGS_URL);
+      chrome.tabs.create({url: SETTINGS_URL});
     }, false);
   }
 );

@@ -25,6 +25,10 @@
     "default_popup": "page_action/page_action.html"
   },
   "options_page": "settings/settings.html",
+  "options_ui": {
+    "page": "settings/options.html",
+    "chrome_style": true
+  },
   "permissions": [
     "declarativeContent",
     "activeTab",
