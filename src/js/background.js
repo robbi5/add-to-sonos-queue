@@ -52,9 +52,14 @@ function loadSonosDevice() {
 }
 
 function getUrlDetails(url, callback) {
-  url = encodeURIComponent(url);
+  var apiurl;
+  if (url.indexOf('//api.soundcloud.com/') !== -1) {
+    apiurl = url + (url.indexOf('?') !== -1 ? '&' : '?') + 'client_id=' + SC_CLIENT_ID;
+  } else {
+    apiurl = 'https://api.soundcloud.com/resolve.json?url=' + encodeURIComponent(url) + '&client_id=' + SC_CLIENT_ID;
+  }
   request({
-    uri: 'https://api.soundcloud.com/resolve.json?url=' + url + '&client_id=' + SC_CLIENT_ID,
+    uri: apiurl,
     json: true,
     timeout: 10 * 1000
   }, function(err, res, data) {

@@ -29,6 +29,12 @@
       "matches": ["https://soundcloud.com/*"],
       "css": ["css/add-to-sonos-queue.css"],
       "js": ["js/sc.js"]
+    },
+    {
+      "matches": ["https://w.soundcloud.com/player*"],
+      "css": ["css/add-to-sonos-queue.css"],
+      "js": ["js/sc-widget.js"],
+      "all_frames": true
     }
   ],
   "web_accessible_resources": [
