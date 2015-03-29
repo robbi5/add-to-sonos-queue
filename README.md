@@ -5,7 +5,7 @@ Chrome Extension that adds the ability to add tracks and playlists from SoundClo
 
 [![Flattr this git repo](https://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=robbi5&url=https%3A%2F%2Fgithub.com%2Frobbi5%2Fadd-to-sonos-queue)
 
-![Screenshot](https://raw.githubusercontent.com/robbi5/add-to-sonos-queue/master/screenshots/happy-0.1.0.jpg)
+![Screenshot](https://raw.githubusercontent.com/robbi5/add-to-sonos-queue/master/screenshots/track-1.0.0.jpg)
 
 Download
 --------
@@ -24,10 +24,8 @@ Permissions
 
 Ideas
 -----
-* Inject in SoundCloud player widget iframes and add an "add to sonos queue" button
 * Add support for different rooms/zones
 * Autodiscovery (chrome.sockets.udp must be first available to extensions)
-* Add buttons directly to track listings
 
 Development
 -----------
@@ -45,7 +43,8 @@ Thanks to
 [Browserify](http://browserify.org),
 [browser-request](https://github.com/iriscouch/browser-request),
 [chrome-bootstrap](https://github.com/roykolak/chrome-bootstrap),
-[zepto.js](http://zeptojs.com)
+[zepto.js](http://zeptojs.com),
+[mutation-summary](https://code.google.com/p/mutation-summary/)
 
 License
 -------
