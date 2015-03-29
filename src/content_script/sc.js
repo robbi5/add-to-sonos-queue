@@ -17,6 +17,9 @@ function addButton(soundActions) {
     } else if (wrap.classList.contains('soundBadge__actions')) { /* SIDEBAR */
       var soundBadgeEl = soundActions.parentElement.parentElement.parentElement.parentElement;
       url = soundBadgeEl.querySelector('a.soundTitle__title').href;
+    } else if (wrap.classList.contains('trackItem__actions')) { /* SET */
+      var trackItem = soundActions.parentElement.parentElement.parentElement;
+      url = trackItem.querySelector('a.trackItem__trackTitle').href;
     } else {
       console.warn('add-to-sonos: cannot find container for soundActions:', soundActions);
       return;
