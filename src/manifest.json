@@ -38,7 +38,8 @@
     }
   ],
   "web_accessible_resources": [
-    "content_script/loading.gif"
+    "content_script/loading.gif",
+    "content_script/loading-dark.gif"
   ],
   "options_page": "settings/settings.html",
   "options_ui": {

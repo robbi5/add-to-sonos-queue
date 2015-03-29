@@ -50,3 +50,7 @@
 .ats-button.ats-loading:before {
   background-image: url('chrome-extension://__MSG_@@extension_id__/content_script/loading.gif')
 }
+
+.sc-button-visual.ats-button.ats-loading:before {
+  background-image: url('chrome-extension://__MSG_@@extension_id__/content_script/loading-dark.gif')
+}
