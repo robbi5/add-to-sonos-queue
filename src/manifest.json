@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Add to Sonos Queue",
-  "version": "0.3.1",
+  "version": "1.0.0",
   "description": "Add tracks from SoundCloud to your Sonos queue",
   "homepage_url": "https://github.com/robbi5/add-to-sonos-queue",
   "icons": {
