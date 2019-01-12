@@ -3,8 +3,6 @@ Add to Sonos Queue
 
 Chrome Extension that adds the ability to add tracks and playlists from SoundCloud straight to your Sonos queue.
 
-[![Flattr this git repo](https://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=robbi5&url=https%3A%2F%2Fgithub.com%2Frobbi5%2Fadd-to-sonos-queue)
-
 ![Screenshot](https://raw.githubusercontent.com/robbi5/add-to-sonos-queue/master/screenshots/track-1.0.0.jpg)
 
 Download
@@ -17,10 +15,10 @@ Get it from the Chrome Web Store:
 Permissions
 -----------
 * `https://api.soundcloud.com/*` - connection to the soundcloud api to get track information
-* `http://*/MediaRenderer/AVTransport/Control` - needed for sending the soundcloud track to your sonos
+* `http://*/MediaRenderer/AVTransport/Control` - needed for sending the track to your sonos
 * `http://*/xml/device_description.xml` - needed to test if the entered player ip is a sonos device
 * `declarativeContent` - triggers the visibility of the button only on soundcloud.com
-* `activeTab` - reads the soundcloud track url if the button was clicked
+* `activeTab` - reads the track url if the button was clicked
 
 Ideas
 -----
