@@ -22,21 +22,6 @@ var Sonos = require('sonos').Sonos;
 var SC_CLIENT_ID = '23e4216436888333b85bec82a5e7c075';
 var SONOS_DEVICE = null;
 
-
-var SETTINGS_URL = (function() {
-  // only Chrome >= 40 supports new optionsV2
-  try {
-    var ver = parseInt(navigator.appVersion.match(/Chrome\/(\d+)\./)[1], 10);
-    if (ver >= 40) {
-      return 'chrome://extensions?options=' + chrome.runtime.id;
-    } else {
-      return chrome.runtime.getURL('/settings/settings.html');
-    }
-  } catch(e) {
-    return chrome.runtime.getURL('/settings/settings.html');
-  }
-})();
-
 function loadSonosDevice() {
   return Q.Promise(function(resolve, reject, notify) {
     chrome.storage.sync.get({
@@ -159,7 +144,11 @@ var addToPlaylist = function(track, sendResponse) {
 };
 
 var openSettings = function(sendResponse) {
-  chrome.tabs.create({url: SETTINGS_URL});
+  if (chrome.runtime.openOptionsPage) {
+    chrome.runtime.openOptionsPage();
+  } else {
+    window.open(chrome.runtime.getURL('/settings/options.html'));
+  }
   sendResponse && sendResponse({success: true});
 };
 
