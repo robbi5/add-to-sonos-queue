@@ -1,11 +1,5 @@
-.sc-button-addtoset.ats-collapse,
-.sc-button-medium.sc-button-addtoset.ats-collapse,
-.ats-collapse {
-  text-indent: -400px;
-}
-.sc-button-addtoset.ats-collapse:before,
-.ats-collapse:before {
-  left: 1px;
+.sc-button-medium.ats-button {
+  text-indent: 19px;
 }
 .ats-button {
 
