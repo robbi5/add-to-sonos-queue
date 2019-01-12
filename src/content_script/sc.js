@@ -12,7 +12,7 @@ function addButton(soundActions) {
       } else {
         url = soundEl.querySelector('a.soundTitle__title').href;
       }
-    } else if (wrap.classList.contains('listenEngagement__actions')) { /* PAGE */
+    } else if (wrap.classList.contains('listenEngagement__actions') || soundActions.classList.contains('listenEngagement__actions')) { /* PAGE */
       url = location.href;
     } else if (wrap.classList.contains('soundBadge__actions')) { /* SIDEBAR */
       var soundBadgeEl = soundActions.parentElement.parentElement.parentElement.parentElement;
