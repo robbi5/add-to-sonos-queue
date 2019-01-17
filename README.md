@@ -27,13 +27,13 @@ Ideas
 
 Development
 -----------
-Install [node.js](http://nodejs.org/) and [browserify](http://browserify.org/).
+Install [node.js](http://nodejs.org/).
 
 Install [Grunt](http://gruntjs.com/) and plugins with `npm install`.
 
 Change things in `src`, use `grunt` to compile and copy to `dist/`.
 
-Use the [Chrome Apps & Extensions Developer Tool](https://chrome.google.com/webstore/detail/chrome-apps-extensions-de/ohmmkhmmmpcnpikjeljgnaoabkaalbgc) to load `dist/` as unpacked extension.
+Use the Chrome Extension Settings at `chrome://extensions` to load `dist/` as unpacked extension.
 
 Thanks to
 ---------
