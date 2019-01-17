@@ -71,7 +71,7 @@ function createButton(prevButton, url) {
     addToSonosButton.classList.remove('ats-failure');
     addToSonosButton.classList.add('ats-loading');
 
-    chrome.runtime.sendMessage({action: 'addToPlaylist', url: url}, function(response) {
+    chrome.runtime.sendMessage({action: 'addToPlaylist', provider: 'sc', url: url}, function(response) {
       addToSonosButton.classList.remove('ats-loading');
       if (response.success) {
         addToSonosButton.classList.add('ats-success');

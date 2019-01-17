@@ -27,14 +27,19 @@
   "content_scripts": [
     {
       "matches": ["https://soundcloud.com/*"],
-      "css": ["css/add-to-sonos-queue.css"],
-      "js": ["js/sc.js"]
+      "css": ["css/sc/add-to-sonos-queue.css"],
+      "js": ["js/sc/content.js"]
     },
     {
       "matches": ["https://w.soundcloud.com/player*"],
-      "css": ["css/add-to-sonos-queue.css"],
-      "js": ["js/sc-widget.js"],
+      "css": ["css/sc/add-to-sonos-queue.css"],
+      "js": ["js/sc/widget.js"],
       "all_frames": true
+    },
+    {
+      "matches": ["https://hearthis.at/*"],
+      "css": ["css/ht/add-to-sonos-queue.css"],
+      "js": ["js/ht/content.js"]
     }
   ],
   "web_accessible_resources": [
@@ -50,6 +55,7 @@
     "activeTab",
     "storage",
     "https://api.soundcloud.com/*",
+    "https://api-v2.hearthis.at/*",
     "http://*/MediaRenderer/AVTransport/Control",
     "http://*/xml/device_description.xml"
   ]

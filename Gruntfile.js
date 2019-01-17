@@ -17,15 +17,22 @@ module.exports = function(grunt) {
         }
       },
       content_sc: {
-        src: ['src/lib/mutation-summary.js', 'src/content_script/sc.js'],
-        dest: 'dist/js/sc.js',
+        src: ['src/lib/mutation-summary.js', 'src/content_script/sc/content.js'],
+        dest: 'dist/js/sc/content.js',
         options: {
           alias: ['./src/lib/mutation-summary.js:mutation-summary']
         }
       },
       content_sc_widget: {
-        src: ['src/lib/mutation-summary.js', 'src/content_script/sc-widget.js'],
-        dest: 'dist/js/sc-widget.js',
+        src: ['src/lib/mutation-summary.js', 'src/content_script/sc/widget.js'],
+        dest: 'dist/js/sc/widget.js',
+        options: {
+          alias: ['./src/lib/mutation-summary.js:mutation-summary']
+        }
+      },
+      content_ht: {
+        src: ['src/lib/mutation-summary.js', 'src/content_script/ht/content.js'],
+        dest: 'dist/js/ht/content.js',
         options: {
           alias: ['./src/lib/mutation-summary.js:mutation-summary']
         }
@@ -45,9 +52,10 @@ module.exports = function(grunt) {
       },
       css: {
         expand: true,
-        src: 'src/css/**',
+        cwd: 'src/css',
+        src: '**',
         dest: 'dist/css/',
-        flatten: true,
+        flatten: false,
         filter: 'isFile'
       },
       content_script: {

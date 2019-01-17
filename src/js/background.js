@@ -79,7 +79,6 @@ var wrapSoundCloudTrack = function(data) {
            + '</DIDL-Lite>';
    return {uri: trackuri, metadata: didl};
 };
-
 // requires data.id and data.title
 var wrapSoundCloudPlaylist = function(data) {
   var playlistid = data.id;
@@ -120,14 +119,14 @@ var play = function(data, sendResponse) {
    .fail(function() { sendResponse({error: true}); });
 };
 
-var addUrlToPlaylist = function(url, sendResponse) {
+var addSoundCloudUrlToPlaylist = function(url, sendResponse) {
   getUrlDetails(url, function(response) {
     if (response.error) { return sendResponse(response); }
-    addToPlaylist(response.data, sendResponse);
+    addSoundCloudTrackToPlaylist(response.data, sendResponse);
   });
 };
 
-var addToPlaylist = function(track, sendResponse) {
+var addSoundCloudTrackToPlaylist = function(track, sendResponse) {
   if (SONOS_DEVICE === null) {
     return sendResponse({error: true, message: 'Player is not configured.', setup: true});
   }
@@ -141,6 +140,62 @@ var addToPlaylist = function(track, sendResponse) {
   fn(track)
     .then(function() { sendResponse({success: true}); })
     .fail(function() { sendResponse({error: true}); });
+};
+
+var getHearThisTrackDetails = function(id, callback) {
+  var apiurl = 'https://api-v2.hearthis.at/' + id;
+  request({
+    uri: apiurl,
+    json: true,
+    timeout: 10 * 1000
+  }, function(err, res, data) {
+    if (err) { return callback({error: true}); }
+    if (res.statusCode !== 200) { return callback({error: true, status: res.statusCode}); }
+    return callback({success: true, data: data});
+  });
+};
+
+var secToHHMMSS = function (sec) {
+  var sec_num = parseInt(sec, 10);
+  var hours   = Math.floor(sec_num / 3600);
+  var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+  var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+  if (hours   < 10) { hours   = '0' + hours; }
+  if (minutes < 10) { minutes = '0' + minutes; }
+  if (seconds < 10) { seconds = '0' + seconds; }
+  return hours + ':' + minutes + ':' + seconds;
+}
+
+var addHearThisAtTrackToPlaylist = function(id, sendResponse) {
+  if (SONOS_DEVICE === null) {
+    return sendResponse({error: true, message: 'Player is not configured.', setup: true});
+  }
+  getHearThisTrackDetails(id, function(response) {
+    if (response.error) { return sendResponse(response); }
+    var data = response.data;
+
+    var trackid = data.id;
+    var trackuri = data.stream_url;
+    var duration = secToHHMMSS(data.duration);
+    var coverUrl = data.artwork_url;
+    var title = htmlEntities(data.title);
+    var itemId = "hat" + trackid;
+
+    var metadata = '<DIDL-Lite xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:upnp="urn:schemas-upnp-org:metadata-1-0/upnp/" xmlns:r="urn:schemas-rinconnetworks-com:metadata-1-0/" xmlns="urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/">';
+    metadata += '<item id="' + itemId + '">';
+    metadata += '<res protocolInfo="http-get:*:audio/mpeg:*" duration="' + duration + '">' + trackuri + '</res>';
+    metadata += '<upnp:albumArtURI>' + coverUrl + '</upnp:albumArtURI>';
+    metadata += '<dc:title>' + title + '</dc:title>'; // FIXME: sometimes doesn't work
+    //if (artist) metadata += '<dc:creator>' + artist + '</dc:creator>'; // FIXME
+    //if (album) metadata += '<upnp:album>' + album + '</upnp:album>';
+    metadata += '</item></DIDL-Lite>';
+
+    var track = {uri: trackuri, metadata: metadata};
+
+    Q.ninvoke(SONOS_DEVICE, 'queue', track);
+    sendResponse({success: true});
+  });
 };
 
 var openSettings = function(sendResponse) {
@@ -164,11 +219,14 @@ chrome.runtime.onMessage.addListener(
       if (request.action === 'play') {
         play(request.track, sendResponse);
       }
-      if (request.action === 'addToPlaylist' && typeof request.url !== "undefined") {
-        addUrlToPlaylist(request.url, sendResponse);
+      if (request.action === 'addToPlaylist' && request.provider === 'sc' && typeof request.url !== "undefined") {
+        addSoundCloudUrlToPlaylist(request.url, sendResponse);
       }
-      if (request.action === 'addToPlaylist' && typeof request.track !== "undefined") {
-        addToPlaylist(request.track, sendResponse);
+      if (request.action === 'addToPlaylist' && request.provider === 'sc' && typeof request.track !== "undefined") {
+        addSoundCloudTrackToPlaylist(request.track, sendResponse);
+      }
+      if (request.action === 'addToPlaylist' && request.provider === 'ht' && typeof request.id !== "undefined") {
+        addHearThisAtTrackToPlaylist(request.id, sendResponse);
       }
       return true;
     }
