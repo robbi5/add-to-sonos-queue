@@ -1,7 +1,7 @@
 Add to Sonos Queue
 ==================
 
-Chrome Extension that adds the ability to add tracks and playlists from SoundCloud straight to your Sonos queue.
+Chrome Extension that adds the ability to add tracks and playlists from SoundCloud and hearthis.at straight to your Sonos queue.
 
 ![Screenshot](https://raw.githubusercontent.com/robbi5/add-to-sonos-queue/master/screenshots/track-1.0.0.jpg)
 
@@ -15,6 +15,7 @@ Get it from the Chrome Web Store:
 Permissions
 -----------
 * `https://api.soundcloud.com/*` - connection to the soundcloud api to get track information
+* `https://api-v2.hearthis.at/*` - connection to the hearthis.at api to get track information
 * `http://*/MediaRenderer/AVTransport/Control` - needed for sending the track to your sonos
 * `http://*/xml/device_description.xml` - needed to test if the entered player ip is a sonos device
 * `declarativeContent` - triggers the visibility of the button only on soundcloud.com
